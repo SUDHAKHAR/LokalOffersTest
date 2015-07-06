@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  console.log("This is in server foolder");
+ 
   var express = require('express');
   var path = require('path');
   var logger = require('morgan');

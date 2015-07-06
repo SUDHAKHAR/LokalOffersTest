@@ -1,10 +1,40 @@
 angular.module('starter.controllers',[])
 
 
+.controller('MapCtrl', function($scope, $ionicLoading) {
+  $scope.mapCreated = function(map) {
+    $scope.map = map;
+  };
+
+  $scope.centerOnMe = function () {
+    console.log("Centering");
+    if (!$scope.map) {
+      return;
+    }
+
+    $scope.loading = $ionicLoading.show({
+      content: 'Getting current location...',
+      showBackdrop: false
+    });
+
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      console.log('Got pos', pos);
+      $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+      $scope.loading.hide();
+    }, function (error) {
+      alert('Unable to get location: ' + error.message);
+    });
+  };
+})
+
+
 .controller('AppCtrl', function($scope, $ionicModal, $timeout,loginsFactory) {
   // Form data for the login modal
   $scope.loginData = {};
-
+$scope.logins = [];
+  $scope.isEditable = [];
+  $scope.passwords = [];
+  $scope.isLogin=false;
   // Create the login modal that we will use later
  $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
@@ -21,10 +51,14 @@ angular.module('starter.controllers',[])
   $scope.login = function() {
     $scope.modal.show();
   };
-
+ $scope.logout = function() {
+	 
+    $scope.isLogin=false;
+  };
   // Perform the login action when the user submits the login form
-  $scope.save = function() {
-	alert('Oops something went wrong!');
+  $scope.save = function($event) {
+	 console.log('Doing login', $scope.loginData);
+	 alert($scope.loginData.username);
 'use strict';
  /*var express = require('express');
   var router = express.Router();
@@ -34,22 +68,81 @@ angular.module('starter.controllers',[])
   db.logins.insert({'login': $scope.loginusername,'isCompleted': false,'password':$scope.loginpassword});*/
     // Simulate a login delay. Remove this and replace with your login
     // code if using a login system
+	
 	console.log("This is save");
-	  alert('Click Logins');
+	  alert($scope.loginData.password);
      loginsFactory.saveLogin({
-        "login": $scope.loginusername,
-        "isCompleted": false,
-		"password":$scope.loginpassword
+        "login": $scope.loginData.username,
+        "isAdmin": false,
+		"password":$scope.loginData.password
       }).then(function(data) {
-        $scope.logins.push(data.data);
+		  $scope.isLogin=true;
+        $scope.logins.set(data.data);
+		
       });
-      $scope.loginusername = '';
+	   
+	  
+    $scope.loginusername=$scope.loginData.username
 	$scope.closeLogin();
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
+    
   };
 })
+
+.controller('DashCtrl', function($scope, $rootScope, $ionicUser, $ionicPush) {
+  // Identifies a user with the Ionic User service
+  $scope.identifyUser = function() {
+    console.log('Ionic User: Identifying with Ionic User service');
+
+    var user = $ionicUser.get();
+    if(!user.user_id) {
+      // Set your user_id here, or generate a random one.
+      user.user_id = $ionicUser.generateGUID();
+    };
+
+    // Add some metadata to your user object.
+    angular.extend(user, {
+      name: 'Ionitron',
+      bio: 'I come from planet Ion'
+    });
+
+    // Identify your user with the Ionic User Service
+    $ionicUser.identify(user).then(function(){
+      $scope.identified = true;
+      alert('Identified user ' + user.name + '\n ID ' + user.user_id);
+    });
+  };
+})  
+
+
+.controller('DashCtrl', function($scope, $rootScope, $ionicUser, $ionicPush) {
+  
+  // Identifies a user with the Ionic User service
+  $scope.identifyUser = function() {
+    // Your identify code from before
+  };
+  
+  // Registers a device for push notifications and stores its token
+  $scope.pushRegister = function() {
+    console.log('Ionic Push: Registering user');
+
+    // Register with the Ionic Push service.  All parameters are optional.
+    $ionicPush.register({
+      canShowAlert: true, //Can pushes show an alert on your screen?
+      canSetBadge: true, //Can pushes update app icon badges?
+      canPlaySound: true, //Can notifications play a sound?
+      canRunActionsOnWake: true, //Can run actions outside the app,
+      onNotification: function(notification) {
+        // Handle new push notifications here
+        // console.log(notification);
+        return true;
+      }
+    });
+  };
+})
+
+
+
+
 
 .controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
@@ -61,81 +154,6 @@ angular.module('starter.controllers',[])
     { title: 'Cowbell', id: 6 }
   ];
 })
-/*.controller('LoginCtrl', function($rootScope, $scope, loginsFactory	) {
-   alert('Click Logins');
-  $scope.logins = [];
-  $scope.isEditable = [];
-  $scope.passwords = [];
- 
-  // get all Todos on Load
-  loginsFactory.getLogins().then(function(data) {
-    $scope.logins = data.data;
-  });
- 
-  // Save a Todo to the server
-  $scope.save = function() {
-	  console.log("This is save");
-	  alert('Click Logins');
-     loginsFactory.savelogin({
-        "login": $scope.loginusername,
-        "isCompleted": false,
-		"password":$scope.loginpassword
-      }).then(function(data) {
-        $scope.logins.push(data.data);
-      });
-      $scope.loginusername = '';
-  };
- 
-  //update the status of the Todo
-  $scope.updateStatus = function($event, _id, i) {
-    var cbk = $event.target.checked;
-    var _t = $scope.logins[i];
-    loginsFactory.updateLogin({
-      _id: _id,
-      isCompleted: cbk,
-      login: _t.login
-    }).then(function(data) {
-      if (data.data.updatedExisting) {
-        _t.isCompleted = cbk;
-      } else {
-        alert('Oops something went wrong!');
-      }
-    });
-  };
- 
-  // Update the edited Todo
-  $scope.edit = function($event, i) {
-    if ($event.which == 13 && $event.target.value.trim()) {
-      var _t = $scope.logins[i];
-      loginsFactory.updateLogin({
-        _id: _t._id,
-        login: $event.target.value.trim(),
-        isCompleted: _t.isCompleted
-      }).then(function(data) {
-        if (data.data.updatedExisting) {
-          _t.login = $event.target.value.trim();
-          $scope.isEditable[i] = false;
-        } else {
-          alert('Oops something went wrong!');
-        }
-      });
-    }
-  };
- 
-  // Delete a Todo
-  $scope.delete = function(i) {
-    loginsFactory.deleteLogin($scope.Logins[i]._id).then(function(data) {
-      if (data.data) {
-        $scope.logins.splice(i, 1);
-      }
-    });
-  };
-  
-  
-}) */
-
-
-
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 });

@@ -8,11 +8,15 @@
       <ion-nav-buttons side="left">
 
         <button class="button button-icon button-clear ion-navicon" menu-toggle="left"> </button>
+		<button class="button button-icon button-clear "  ng-click="logout()" ng-hide="!isLogin"  menu-toggle="left">Welcome {{loginData.username}}</button>
  </ion-nav-buttons>
 
-<ion-nav-buttons side="right">
-        <button class="button button-icon button-clear " ng-click="login()" menu-toggle="right"> Login</button>
- </ion-nav-buttons>
+		  <ion-nav-buttons side="right" >
+ <button class="button button-icon button-clear "  ng-click="logout()" ng-hide="!isLogin"  menu-toggle="right"> Logout</button>
+
+
+        <button class="button button-icon button-clear " ng-hide="isLogin" ng-click="login()" menu-toggle="right">Login</button>
+		  </ion-nav-buttons>
  
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>
@@ -22,17 +26,20 @@
     <ion-header-bar class="bar-positive">
      
 
-  <h1 class="title">Local Offers</h1>
+  <h1 class="title">LoKal Offers</h1>
 
     </ion-header-bar>
 
     <ion-content>
       <ion-list class="list-calm">
-        <ion-item menu-close ng-click="login()">
+        <ion-item menu-close ng-click="login()" ng-hide="isLogin">
           Login
         </ion-item>
+		<ion-item menu-close ng-click="logout()" ng-hide="!isLogin">
+          Logout({{loginData.username}})
+        </ion-item>
         <ion-item menu-close href="#/app/search">
-          Search
+          Add Offers
         </ion-item>
         <ion-item menu-close href="#/app/browse">
          Categories
