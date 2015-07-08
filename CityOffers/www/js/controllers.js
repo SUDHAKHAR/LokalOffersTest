@@ -2,27 +2,33 @@ angular.module('starter.controllers',[])
 
 
 .controller('MapCtrl', function($scope, $ionicLoading) {
+	
+	 console.log("This is in Map Control");
   $scope.mapCreated = function(map) {
     $scope.map = map;
   };
 
   $scope.centerOnMe = function () {
     console.log("Centering");
+	
     if (!$scope.map) {
+		alert('This is in MapCTRL  Error Occured');
       return;
     }
 
     $scope.loading = $ionicLoading.show({
       content: 'Getting current location...',
-      showBackdrop: false
+      showBackdrop: true
     });
 
     navigator.geolocation.getCurrentPosition(function (pos) {
       console.log('Got pos', pos);
+	 
+	  console.log("This is in Map Control", pos);
       $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-      $scope.loading.hide();
+    $scope.loading.hide();
     }, function (error) {
-      alert('Unable to get location: ' + error.message);
+     
     });
   };
 })
@@ -78,10 +84,7 @@ $scope.logins = [];
       }).then(function(data) {
 		  $scope.isLogin=true;
         $scope.logins.set(data.data);
-		
       });
-	   
-	  
     $scope.loginusername=$scope.loginData.username
 	$scope.closeLogin();
     

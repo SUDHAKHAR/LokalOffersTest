@@ -5,7 +5,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers','starter.directives'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -19,39 +19,6 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.directives'])
       StatusBar.styleDefault();
     }
   });
-})
-
-
-
-
-.controller(function($scope, $ionicActionSheet, $timeout) {
-
- // Triggered on a button click, or some other target
- $scope.show = function() {
-
-   // Show the action sheet
-   var hideSheet = $ionicActionSheet.show({
-     buttons: [
-       { text: '<b>Share</b> This' },
-       { text: 'Move' }
-     ],
-     destructiveText: 'Delete',
-     titleText: 'Modify your album',
-     cancelText: 'Cancel',
-     cancel: function() {
-          // add cancel code..
-        },
-     buttonClicked: function(index) {
-       return true;
-     }
-   });
-
-   // For example's sake, hide the sheet after two seconds
-   $timeout(function() {
-     hideSheet();
-   }, 2000);
-
- };
 })
 
 
@@ -98,7 +65,8 @@ angular.module('starter', ['ionic', 'starter.controllers','starter.directives'])
     url: "/search",
     views: {
       'menuContent': {
-	        templateUrl: "templates/search.html"
+	        templateUrl: "templates/search.html",
+			 controller: 'MapCtrl'
       }
     }
   })
