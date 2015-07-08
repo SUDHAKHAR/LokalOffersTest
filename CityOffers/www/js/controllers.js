@@ -7,7 +7,23 @@ angular.module('starter.controllers',[])
   $scope.mapCreated = function(map) {
     $scope.map = map;
   };
-
+function initialise() {   
+    var myLatlng = new google.maps.LatLng(53.068165,-4.076803);
+    var mapOptions = {
+        zoom: 15, 
+        center: myLatlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP, 
+      }
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    var marker = new google.maps.Marker({
+      position: myLatlng,
+      map: map,
+    });
+    $scope.map = map;    
+  }
+  
+  google.maps.event.addDomListener(window, 'load', initialise);
+  
   $scope.centerOnMe = function () {
     console.log("Centering");
 	
@@ -26,7 +42,13 @@ angular.module('starter.controllers',[])
 	 
 	  console.log("This is in Map Control", pos);
       $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+	  
     $scope.loading.hide();
+	window.localStorage['pos.coords.latitude.local'] = pos.coords.latitude;
+	window.localStorage['pos.coords.longitude.local'] = pos.coords.longitude;
+	
+	$scope.pos.coords.latitude.local=pos.coords.latitude;
+	   $scope.pos.coords.longitude.local=pos.coords.longitude;
     }, function (error) {
      
     });
@@ -65,6 +87,7 @@ $scope.logins = [];
   $scope.save = function($event) {
 	 console.log('Doing login', $scope.loginData);
 	 alert($scope.loginData.username);
+	 
 'use strict';
  /*var express = require('express');
   var router = express.Router();
@@ -73,19 +96,24 @@ $scope.logins = [];
   
   db.logins.insert({'login': $scope.loginusername,'isCompleted': false,'password':$scope.loginpassword});*/
     // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
+    // code if using a login system var name = window.localStorage['name'] || 'you';
+	var lat=window.localStorage['pos.coords.latitude.local'] ;
+	var lon=window.localStorage['pos.coords.longitude.local'] ;
 	
 	console.log("This is save");
-	  alert($scope.loginData.password);
+	  alert(''+lat);
+	  
      loginsFactory.saveLogin({
         "login": $scope.loginData.username,
         "isAdmin": false,
-		"password":$scope.loginData.password
+		"password":$scope.loginData.password,
+		"coordslatitude":''+lat,
+		"coordslongitudes":''+lon
       }).then(function(data) {
 		  $scope.isLogin=true;
         $scope.logins.set(data.data);
       });
-    $scope.loginusername=$scope.loginData.username
+    $scope.loginusername=$scope.loginData.username;
 	$scope.closeLogin();
     
   };
