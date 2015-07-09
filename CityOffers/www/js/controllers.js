@@ -7,14 +7,21 @@ angular.module('starter.controllers',[])
   $scope.mapCreated = function(map) {
     $scope.map = map;
   };
+  
+  var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
+
 function initialise() {   
-    var myLatlng = new google.maps.LatLng(53.068165,-4.076803);
+    var myLatlng = new google.maps.LatLng(17.8333,83.2000);
+	
+	directionsDisplay = new google.maps.DirectionsRenderer();
     var mapOptions = {
-        zoom: 15, 
+        zoom: 14, 
         center: myLatlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP, 
       }
     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+	directionsDisplay.setMap(map);
     var marker = new google.maps.Marker({
       position: myLatlng,
       map: map,
@@ -22,7 +29,46 @@ function initialise() {
     $scope.map = map;    
   }
   
+
+   /*
+   var infowindow = new google.maps.InfoWindow();
+  var service = new google.maps.places.PlacesService(map);
+  var request = {
+    placeId: 'ChIJN1t_tDeuEmsRUsoyG83frY4'
+  };
+   service.getDetails(request, function(place, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+      var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        infowindow.setContent(place.name);
+		window.localStorage['place.name.local'] = place.name;
+        infowindow.open(map, this);
+      });
+    }
+  });
+ 
+  function calcRoute() {
+  var start = document.getElementById("start").value;
+  var end = document.getElementById("end").value;
+  var request = {
+    origin:start,
+    destination:end,
+    travelMode: google.maps.TravelMode.DRIVING
+  };
+  directionsService.route(request, function(result, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(result);
+    }
+  });
+  }
+  */
   google.maps.event.addDomListener(window, 'load', initialise);
+  
+  
+
   
   $scope.centerOnMe = function () {
     console.log("Centering");
@@ -37,6 +83,10 @@ function initialise() {
       showBackdrop: true
     });
 
+	
+	
+	
+	
     navigator.geolocation.getCurrentPosition(function (pos) {
       console.log('Got pos', pos);
 	 
@@ -99,16 +149,17 @@ $scope.logins = [];
     // code if using a login system var name = window.localStorage['name'] || 'you';
 	var lat=window.localStorage['pos.coords.latitude.local'] ;
 	var lon=window.localStorage['pos.coords.longitude.local'] ;
-	
+	var place=window.localStorage['place.local'] ;
 	console.log("This is save");
-	  alert(''+lat);
+	  alert(''+lat+'& Place is:'+place);
 	  
      loginsFactory.saveLogin({
         "login": $scope.loginData.username,
         "isAdmin": false,
 		"password":$scope.loginData.password,
 		"coordslatitude":''+lat,
-		"coordslongitudes":''+lon
+		"coordslongitudes":''+lon,
+		"area":''+place
       }).then(function(data) {
 		  $scope.isLogin=true;
         $scope.logins.set(data.data);
