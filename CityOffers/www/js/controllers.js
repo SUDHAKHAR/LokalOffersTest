@@ -3,9 +3,81 @@ angular.module('starter.controllers',[])
 
 .controller('MapCtrl', function($scope, $ionicLoading) {
 	
+	var geocoder;
+var map;
+var infowindow = new google.maps.InfoWindow();
+var marker;
+
+	 var service;
+	
 	 console.log("This is in Map Control");
   $scope.mapCreated = function(map) {
     $scope.map = map;
+	
+	
+	
+	
+	service = new google.maps.places.PlacesService($scope.map);
+	
+	
+	
+	var mapOptions = {
+    center: {lat: -33.8688, lng: 151.2195},
+    zoom: 13
+  };
+  var map = $scope.map;
+
+  var input = /** @type {HTMLInputElement} */(
+      document.getElementById('input'));
+
+  var autocomplete = new google.maps.places.Autocomplete(input);
+  autocomplete.bindTo('bounds', $scope.map);
+
+  $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  var infowindow = new google.maps.InfoWindow();
+  var marker = new google.maps.Marker({
+    map: $scope.map
+  });
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.open($scope.map, marker);
+  });
+
+  google.maps.event.addListener(autocomplete, 'place_changed', function() {
+    infowindow.close();
+    var place = autocomplete.getPlace();
+    if (!place.geometry) {
+      return;
+    }
+
+    if (place.geometry.viewport) {
+      $scope.map.fitBounds(place.geometry.viewport);
+    } else {
+      $scope.map.setCenter(place.geometry.location);
+      $scope.map.setZoom(17);
+    }
+
+    // Set the position of the marker using the place ID and location
+    marker.setPlace(/** @type {!google.maps.Place} */ ({
+      placeId: place.place_id,
+      location: place.geometry.location
+    }));
+    marker.setVisible(true);
+
+    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
+        'Place ID: ' + place.place_id + '<br>' +
+        place.formatted_address);
+		 window.localStorage['place.local'] = place.name;
+    infowindow.open(map, marker);
+  });
+ 
+	
+  google.maps.event.addDomListener(window, 'load', initialize);
+	
+	
+	
+	
+	
   };
   
   var directionsDisplay;
@@ -13,64 +85,39 @@ var directionsService = new google.maps.DirectionsService();
 
 function initialise() {   
     var myLatlng = new google.maps.LatLng(17.8333,83.2000);
-	
-	directionsDisplay = new google.maps.DirectionsRenderer();
-    var mapOptions = {
-        zoom: 14, 
-        center: myLatlng,
-        mapTypeId: google.maps.MapTypeId.ROADMAP, 
-      }
-    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-	directionsDisplay.setMap(map);
-    var marker = new google.maps.Marker({
-      position: myLatlng,
-      map: map,
-    });
-    $scope.map = map;    
-  }
+	 var latlng = new google.maps.LatLng(17.8333,83.2000);
+
+	geocoder = new google.maps.Geocoder();
+
+	 var mapOptions = {
+           zoom: 8,
+    center: latlng,
+    mapTypeId: 'roadmap'
+
+        };
+}
+
+
+
+
+
   
 
-   /*
-   var infowindow = new google.maps.InfoWindow();
-  var service = new google.maps.places.PlacesService(map);
-  var request = {
-    placeId: 'ChIJN1t_tDeuEmsRUsoyG83frY4'
-  };
-   service.getDetails(request, function(place, status) {
-    if (status == google.maps.places.PlacesServiceStatus.OK) {
-      var marker = new google.maps.Marker({
-        map: map,
-        position: place.geometry.location
-      });
-      google.maps.event.addListener(marker, 'click', function() {
-        infowindow.setContent(place.name);
-		window.localStorage['place.name.local'] = place.name;
-        infowindow.open(map, this);
-      });
-    }
-  });
+
+
+  
+ /* var place =new google.maps.places.getPlace(myLatlng);
+ */
+	
+ // 
+  
  
-  function calcRoute() {
-  var start = document.getElementById("start").value;
-  var end = document.getElementById("end").value;
-  var request = {
-    origin:start,
-    destination:end,
-    travelMode: google.maps.TravelMode.DRIVING
-  };
-  directionsService.route(request, function(result, status) {
-    if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(result);
-    }
-  });
-  }
-  */
-  google.maps.event.addDomListener(window, 'load', initialise);
   
   
 
   
   $scope.centerOnMe = function () {
+	  alert('This is in ccenterOnMe() function');
     console.log("Centering");
 	
     if (!$scope.map) {
@@ -80,19 +127,47 @@ function initialise() {
 
     $scope.loading = $ionicLoading.show({
       content: 'Getting current location...',
+	  
+	  
       showBackdrop: true
     });
 
-	
-	
-	
+	 
 	
     navigator.geolocation.getCurrentPosition(function (pos) {
+		var geocoder;
+var map;
+var infowindow = new google.maps.InfoWindow();
+var marker;
       console.log('Got pos', pos);
-	 
+	 alert('This is in geolocation');
 	  console.log("This is in Map Control", pos);
-      $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+	   var input = '17.8333,83.2000';
+	   alert('This is in geolocation 1');
+  var latlngStr = input.split(',', 2);
+  var lat = parseFloat(latlngStr[0]);
+  var lng = parseFloat(latlngStr[1]);
+ 
+
+   alert('This is in geolocation 2');
+  var latlng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+  alert('This is in geolocation 3');
+  
+  marker = new google.maps.Marker({
+            position: latlng,
+            map: $scope.map
+        });
+		 alert('This is in geolocation 4');
+		 $scope.loading.hide();
+		  $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+		infowindow.setContent($scope.map.formatted_address);
+        infowindow.open($scope.map, marker);
+  
+ 
 	  
+	  
+     
+	//  var place1=service.getPlace();
     $scope.loading.hide();
 	window.localStorage['pos.coords.latitude.local'] = pos.coords.latitude;
 	window.localStorage['pos.coords.longitude.local'] = pos.coords.longitude;
@@ -138,20 +213,20 @@ $scope.logins = [];
 	 console.log('Doing login', $scope.loginData);
 	 alert($scope.loginData.username);
 	 
-'use strict';
- /*var express = require('express');
-  var router = express.Router();
-  var mongojs = require('mongojs');
-  var db =mongojs('mongodb://sudhakar:umasan57@ds047792.mongolab.com:47792/cityoffers', ['logins']); 
-  
-  db.logins.insert({'login': $scope.loginusername,'isCompleted': false,'password':$scope.loginpassword});*/
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system var name = window.localStorage['name'] || 'you';
+
 	var lat=window.localStorage['pos.coords.latitude.local'] ;
 	var lon=window.localStorage['pos.coords.longitude.local'] ;
 	var place=window.localStorage['place.local'] ;
 	console.log("This is save");
+ 
+	  
 	  alert(''+lat+'& Place is:'+place);
+	  
+	  
+	  
+	  
+	  
+	  
 	  
      loginsFactory.saveLogin({
         "login": $scope.loginData.username,
