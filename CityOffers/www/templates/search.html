@@ -15,8 +15,7 @@
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB16sGmIekuGIvYOfNoW9T44377IU2d2Es&sensor=true"></script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
@@ -29,38 +28,78 @@
 
 
   </head>
+ 
+   <ion-content scroll="true">
+    <br> <br> <br>
+  <div class="list">
+  <form ng-submit="registermerchant($event)">
+			 <label class="item item-input">
+          <span class="input-label">UserId</span>
+          <input type="text" id="loginData.userid" value="{{loginData.username}}" ng-model="loginData.userid"">
+        </label>
+		
+			 <label class="item item-input">
+          <span class="input-label">Password</span>
+          <input type="password" id="loginData.pass" ng-model="loginData.pass" >
+        </label>
+		 <label class="item item-input">
+          <span class="input-label">Re-Type Password</span>
+          <input type="password" id="loginData.pass1" ng-model="loginData.pass1"  >
+        </label>
+   <label class="item item-input">
+          <span class="input-label">Company Name</span>
+          <input type="text" id="loginData.compname" value="Devi Android Apps"  ng-model="loginData.compname" >
+        </label>
+		 <label class="item item-input">
+          <span class="input-label">Area</span>
+          <input type="text" id="loginData.area" value="{{arearegister}}"  ng-model="loginData.area">
+        </label>
+		 <label class="item item-input">
+          <span class="input-label">City</span>
+          <input type="text" id="loginData.city"  value="{{cityregister}}" ng-model="loginData.city">
+        </label>
+		 <label class="item item-input">
+          <span class="input-label">E-mail</span>
+          <input type="text" id="loginData.email" ng-model="loginData.email">
+        </label>
+		 <label class="item item-input">
+          <span class="input-label">Contact No.</span>
+          <input type="text" id="loginData.contact1" ng-model="loginData.contact1" >
+        </label>
+		<label class="item item-input">
+          <span class="input-label">Alternate No.</span>
+          <input type="text" id="loginData.contact2" 	ng-model="loginData.contact2">
+        </label>
+	
+       <label class="item item-input">
+          <button class="button button-block button-positive" type="submit">Register</button>
+		</label>
   
-   
-<div id="map" class="row" align="center" style="  ">
-  <body ng-app="starter" ng-controller="MapCtrl">
-      
-    <ion-content scroll="true">
-	<div></div>
-	
+  
+  </form>
+   </div>
+
 	<div>Select Area</div>
-	<div>
-	<div></div>
-	<div></div>
-    <input id="input" class="controls" type="text"
-        placeholder="Enter a location">
-
-	</div> 
 	
-        <div></div><div></div><div></div>
-      <map on-create="mapCreated(map)" ></map>
+
+     
+      <map on-create="mapCreated(map)"  ></map>
     
 
 
-    
+   <div>
       <button ng-click="centerOnMe()" class="button button-icon icon ion-navigate">Show My Location</button>
-	  
+	  </div>
+	 <br> <br> <br>
+	
+   
 	  </ion-content>
     
-	</div>
+	
 	<div class="bar bar-footer bar-positive">
   <button class="button button-clear"></button>
   <div  class="button button-clear"style="font-size:60%">(R)Copy Rights Reserved @2015</div>
   <button  class="button button-clear"style="font-size:75%" >Developed by Devi Android Apps</button>
 </div>
-  </body>
+  
 </html>

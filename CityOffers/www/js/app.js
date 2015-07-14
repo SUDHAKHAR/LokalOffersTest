@@ -22,6 +22,29 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives']
 })
 
 
+.factory('merchantRegisterFactory', function($http) {
+  var urlBase = '/api/merchantlogins';
+  var _loginService = {};
+ 
+  _loginService.getLogins = function() {
+    return $http.get(urlBase);
+  };
+ 
+  _loginService.saveLogin = function(login) {
+	  console.log("This is factory is merchantlogins app.js save");
+    return $http.post(urlBase,login);
+  };
+ 
+  _loginService.updateLogin = function(login) {
+    return $http.put(urlBase, login);
+  };
+ 
+  _loginService.deleteLogin = function(id) {
+    return $http.delete(urlBase + '/' + id);
+  };
+ 
+  return _loginService;
+})
 
 
 
@@ -106,13 +129,3 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives']
   $urlRouterProvider.otherwise('/app/playlists');
 });
 
-loginApp=angular.module('loginApp', ['ngRoute'])
-  .config(function($routeProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: '/templates/login.html',
-        controller: 'LoginCtrl'	
-      }).otherwise({
-        redirectTo: '/'
-      });
-  });

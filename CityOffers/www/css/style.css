@@ -61,10 +61,16 @@ display: block;
 .my-menu .list {
   background-color: transparent;
 }
+#map { height: 200px; width:'100%'}
 map {
   display: block;
-  width: 80%;
-  height: 80%;
+  width: 50%;
+  height: 25%;
+}
+map1 {
+  display: block;
+  width: 70%;
+  height: 25%;
 }
 .scroll {
   height: 100%;
