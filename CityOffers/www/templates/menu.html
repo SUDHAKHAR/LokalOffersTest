@@ -8,14 +8,14 @@
       <ion-nav-buttons side="left">
 
         <button class="button button-icon button-clear ion-navicon" menu-toggle="left"> </button>
-		<button class="button button-icon button-clear "  ng-click="logout()" ng-hide="!isLogin"  menu-toggle="left">Welcome {{loginData.username}}</button>
+		<button class="button button-icon button-clear "  ng-click="logout()" ng-hide="!isLogin"  menu-toggle="left" style="font-size:85%">Welcome {{loginData.username}}</button>
  </ion-nav-buttons>
 
 		  <ion-nav-buttons side="right" >
- <button class="button button-icon button-clear "  ng-click="logout()" ng-hide="!isLogin"  menu-toggle="right"> Logout</button>
+ <button class="button button-icon button-clear "  ng-click="logout()" ng-hide="!isLogin" style="font-size:75%" menu-toggle="right"> Logout</button>
 
 
-        <button class="button button-icon button-clear " ng-hide="isLogin" ng-click="login()" menu-toggle="right">Login</button>
+        <button class="button button-icon button-clear " ng-hide="isLogin" ng-click="login()" style="font-size:75%" menu-toggle="right">Login</button>
 		  </ion-nav-buttons>
  
     </ion-nav-bar>
@@ -26,7 +26,7 @@
     <ion-header-bar class="bar-positive">
      
 
-  <h1 class="title">LoKal Offers</h1>
+  <h2 class="title" style="font-size:80%">LoKal Offers</h2>
 
     </ion-header-bar>
 

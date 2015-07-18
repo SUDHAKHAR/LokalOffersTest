@@ -1,7 +1,7 @@
 angular.module('starter.controllers',[])
 
 
-.controller('MapCtrl', function($scope, $ionicLoading,merchantRegisterFactory) {
+.controller('MapCtrl', function($scope, $ionicLoading,merchantRegisterFactory, $http) {
 	
 	
 	 navigator.geolocation.getCurrentPosition(function (pos) {
@@ -64,8 +64,12 @@ var t5=t3[1].short_name;
         infowindow.open($scope.map, marker);
 		 window.localStorage['place.area.local'] = ''+t1;
 		  window.localStorage['place.city.local'] = ''+t5;
+		   window.localStorage['area.register.local'] = ''+t1;
+		  window.localStorage['city.register.local'] = ''+t5;
 		  $scope.arearegister=t1;
-	$scope.cityregister=t5;
+		$scope.cityregister=t5;
+		  $scope.loginData.area = ''+t1;
+		  $scope.loginData.city = ''+t5;
       } else {
         alert('No results found');
       }
@@ -75,7 +79,7 @@ var t5=t3[1].short_name;
   });
   
   
-  
+ 
   
   
   
@@ -85,24 +89,65 @@ var t5=t3[1].short_name;
 		$ionicLoading.hide();
 	window.localStorage['pos.coords.latitude.local'] = pos.coords.latitude;
 	window.localStorage['pos.coords.longitude.local'] = pos.coords.longitude;
+
 	$ionicLoading.hide();
 	  }, function (error) {
      
     })
+
+	
 	
 	$scope.registermerchant=function($event){
 		 console.log("This is in Map Control registermerchant");
-	 var t1=$scope.loginData.userid;
+	
+	 var now = new Date();
+  
+        var headers = {
+            'Access-Control-Allow-Origin' : '*',
+            'Access-Control-Allow-Methods' : 'POST, GET, OPTIONS, PUT',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
 		
-		var t2=$scope.loginData.pass;
-		var t3=$scope.loginData.pass1;
-		var t4=$scope.loginData.compname;
-		var t5=$scope.loginData.area;
-		var t6=$scope.loginData.city;
-		var t7=$scope.loginData.email;
-		var t8=$scope.loginData.contact1;
-		var t9=$scope.loginData.contact2;
 		
+		return $http({
+            method: "POST",
+            headers: headers,
+      url: 'http://104.155.192.54:8080/api/merchantlogins',
+            data: {
+        "loginid": $scope.loginData.userid,
+        "isActive": true,
+		"password":$scope.loginData.pass,
+		"companyname":$scope.loginData.compname,
+		"area":$scope.loginData.area,
+		"city":$scope.loginData.city,
+		"email":$scope.loginData.email,
+		"contact1":$scope.loginData.contact1,
+		"contact2":$scope.loginData.contact2
+      }
+    }).success(function(data) {
+                console.log("Recoded sucessfully in merchant login success!")
+				  
+        $scope.logins.push(data.data);
+		
+	
+
+                console.log(data);
+    }).error(function(data, status, headers, config) {
+                console.log("Auth.signin.error!")
+        console.log(data);
+        console.log(status);
+        console.log(headers);
+        console.log(config);
+    });
+	
+	
+	
+	
+	
+	
+	
+	
 		 merchantRegisterFactory.saveLogin({
         "loginid": $scope.loginData.userid,
         "isActive": true,
@@ -114,7 +159,7 @@ var t5=t3[1].short_name;
 		"contact1":$scope.loginData.contact1,
 		"contact2":$scope.loginData.contact2
       }).then(function(data) {
-		  $scope.isLogin=true;
+		  
         $scope.logins.push(data.data);
       });
 		
@@ -128,71 +173,7 @@ var t5=t3[1].short_name;
 	 console.log("This is in Map Control");
   $scope.mapCreated = function(map) {
     $scope.map = map;
-	var mapOptions = {
-    center: {lat: -33.8688, lng: 151.2195},
-    zoom: 14
-  };
-  var map = $scope.map;
-
-  var input = /** @type {HTMLInputElement} */(
-      document.getElementById('input1'));
-
-  var autocomplete = new google.maps.places.Autocomplete(input);
-  autocomplete.bindTo('bounds', $scope.map);
-
-  $scope.map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-  var infowindow = new google.maps.InfoWindow();
-  var marker = new google.maps.Marker({
-    map: $scope.map
-  });
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.open($scope.map, marker);
-  });
-
-  google.maps.event.addListener(autocomplete, 'place_changed', function() {
-    infowindow.close();
-    var place = autocomplete.getPlace();
-    if (!place.geometry) {
-      return;
-    }
-
-    if (place.geometry.viewport) {
-      $scope.map.fitBounds(place.geometry.viewport);
-    } else {
-      $scope.map.setCenter(place.geometry.location);
-      $scope.map.setZoom(12);
-    }
-
-    // Set the position of the marker using the place ID and location
-    marker.setPlace(/** @type {!google.maps.Place} */ ({
-      placeId: place.place_id,
-      location: place.geometry.location
-    }));
-    marker.setVisible(true);
-var input1 = place.formatted_address;
-var t3= place.address_components;
-var t5=t3[1].short_name;
-  var latlngStr = input1.split(',', 4);
-  var t1 =latlngStr[0];
-  /*  infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
-        'Place ID: ' + place.place_id + '<br>' +
-        place.formatted_address);*/
-		infowindow.setContent('<div><strong> Area: ' + t1 + '<br> City: '+t5+'</strong><br>' +'Place ID: ' +place.place_id + '<br>' +place.formatted_address+'');
-       
-		 window.localStorage['place.area.local'] = ''+t1;
-		  window.localStorage['place.city.local'] = ''+t5;
-    infowindow.open(map, marker);
-  });
- 
-	
-  google.maps.event.addDomListener(window, 'load', initialize);
-	
-	
-	
-	
-	
-  };
+	};
   
   var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
@@ -204,32 +185,13 @@ function initialise() {
 	geocoder = new google.maps.Geocoder();
 
 	 var mapOptions = {
-           zoom: 12,
+           zoom: 18,
     center: latlng,
     mapTypeId: 'roadmap'
 
         };
 }
 
-
-
-
-
-  
-
-
-
-  
- /* var place =new google.maps.places.getPlace(myLatlng);
- */
-	
- // 
-  
- 
-  
-  
-
-  
   $scope.centerOnMe = function () {
 	  alert('This is in ccenterOnMe() function');
     console.log("Centering");
@@ -292,7 +254,7 @@ var marker;
       $scope.map.fitBounds(results[1].geometry.viewport);
     } else {
       $scope.map.setCenter(results[1].geometry.location);
-      $scope.map.setZoom(12);
+      $scope.map.setZoom(18);
     }
 
     // Set the position of the marker using the place ID and location
@@ -315,6 +277,10 @@ infowindow.setContent('<div><strong> Area: ' + t1 + '<br> City: '+t6+'</strong><
         infowindow.open($scope.map, marker);
 		 window.localStorage['place.area.local'] = ''+t1;
 		  window.localStorage['place.city.local'] = ''+t5;
+		    $scope.arearegister=t1;
+		$scope.cityregister=t5;
+		 $scope.loginData.area = ''+t1;
+		  $scope.loginData.city = ''+t5;
       } else {
         alert('No results found');
       }
@@ -323,13 +289,7 @@ infowindow.setContent('<div><strong> Area: ' + t1 + '<br> City: '+t6+'</strong><
     }
   });
   
-  
-  
-  
-  
-  
-
-		 alert('This is in geolocation 4');
+  		 alert('This is in geolocation 4');
 		 $ionicLoading.hide();
 		
 	window.localStorage['pos.coords.latitude.local'] = pos.coords.latitude;
@@ -342,7 +302,7 @@ infowindow.setContent('<div><strong> Area: ' + t1 + '<br> City: '+t6+'</strong><
 })
 
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout,loginsFactory, $ionicLoading) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout,loginsFactory, $ionicLoading, $http) {
 	
 	
 /*   Default get location while page opened*/
@@ -407,6 +367,10 @@ var t5=t3[1].short_name;
         infowindow.open($scope.map, marker);
 		 window.localStorage['place.area.local'] = ''+t1;
 		  window.localStorage['place.city.local'] = ''+t5;
+		    $scope.arearegister=t1;
+		$scope.cityregister=t5;
+		 $scope.loginData.area = ''+t1;
+		  $scope.loginData.city = ''+t5;
       } else {
         alert('No results found');
       }
@@ -482,9 +446,81 @@ $scope.logins = [];
 	var lon=window.localStorage['pos.coords.longitude.local'] ;
 	var area=window.localStorage['place.area.local'] ;
 	var city=window.localStorage['place.city.local'] ;
-	console.log("This is save");
+	console.log("This is save in appctrl");
  
-     loginsFactory.saveLogin({
+/* $http.post('http://localhost:8100/api/merchantlogins').then(function(resp) {
+    console.log('Success', resp);	
+    // For JSON responses, resp.data contains the result
+  }, function(err) {
+    console.error('ERR', err);
+    // err.status will contain the status code
+  });
+
+ $http.post('http://localhost:8100/api/merchantlogins', $scope.
+ 
+ 
+ data).
+  success(function(data, status, headers, config) {
+    // this callback will be called asynchronously
+    // when the response is available
+	console.log("This is save  $http.post ");
+	  $scope.logins.push($scope.data.data);
+	  $scope.loginusername=$scope.loginData.username;
+	$scope.arearegister=area;
+	$scope.cityregister=city;
+	
+	$scope.closeLogin();
+  }).
+  error(function(data, status, headers, config) {
+    // called asynchronously if an error occurs
+    // or server returns response with an error status.
+  });
+  */
+   var now = new Date();
+  
+        var headers = {
+            'Access-Control-Allow-Origin' : '*',
+            'Access-Control-Allow-Methods' : 'POST, GET, OPTIONS, PUT',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
+		
+		
+		return $http({
+            method: "POST",
+            headers: headers,
+      url: 'http://104.155.192.54:8080/api/logins',
+            data: {
+        "login": $scope.loginData.username,
+        "isAdmin": false,
+		"password":$scope.loginData.password,
+		"coordslatitude":''+lat,
+		"coordslongitudes":''+lon,
+		"area":''+area,
+		"city":''+city,
+		"date":''+now
+
+      }
+    }).success(function(data) {
+                console.log("Auth.signin.success!")
+				  $scope.isLogin=true;
+        $scope.logins.push(data.data);
+		  $scope.loginusername=$scope.loginData.username;
+	$scope.arearegister=area;
+	$scope.cityregister=city;
+	
+	$scope.closeLogin();
+                console.log(data);
+    }).error(function(data, status, headers, config) {
+                console.log("Auth.signin.error!")
+        console.log(data);
+        console.log(status);
+        console.log(headers);
+        console.log(config);
+    });
+ /*
+ $http.post('http://104.155.192.54:8080/api/logins', 
+  {
         "login": $scope.loginData.username,
         "isAdmin": false,
 		"password":$scope.loginData.password,
@@ -492,6 +528,18 @@ $scope.logins = [];
 		"coordslongitudes":''+lon,
 		"area":''+area,
 		"city":''+city
+      }).success(successCallback);
+*/
+     loginsFactory.saveLogin({
+        "login": $scope.loginData.username,
+        "isAdmin": false,
+		"password":$scope.loginData.password,
+		"coordslatitude":''+lat,
+		"coordslongitudes":''+lon,
+		"area":''+area,
+		"city":''+city,
+		"date":''+now
+
       }).then(function(data) {
 		  $scope.isLogin=true;
         $scope.logins.push(data.data);
@@ -515,68 +563,6 @@ $scope.logins = [];
 	 console.log("This is in Map Control");
   $scope.mapCreated = function(map) {
     $scope.map = map;
-	var mapOptions = {
-    center: {lat: -33.8688, lng: 151.2195},
-    zoom: 16
-  };
-  var map = $scope.map;
-
-  var input1 = /** @type {HTMLInputElement} */(
-      document.getElementById('input1'));
-
-  var autocomplete = new google.maps.places.Autocomplete(input1);
-  autocomplete.bindTo('bounds', $scope.map);	
-
-  $scope.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(input1);
-
-  var infowindow = new google.maps.InfoWindow();
-  var marker = new google.maps.Marker({
-    map: $scope.map
-  });
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.open($scope.map, marker);
-  });
-
-  google.maps.event.addListener(autocomplete, 'place_changed', function() {
-    infowindow.close();
-    var place = autocomplete.getPlace();
-    if (!place.geometry) {
-      return;
-    }
-
-    if (place.geometry.viewport) {
-      $scope.map.fitBounds(place.geometry.viewport);
-    } else {
-      $scope.map.setCenter(place.geometry.location);
-      $scope.map.setZoom(16);
-    }
-
-    // Set the position of the marker using the place ID and location
-    marker.setPlace(/** @type {!google.maps.Place} */ ({
-      placeId: place.place_id,
-      location: place.geometry.location
-    }));
-    marker.setVisible(true);
-var input1 = place.formatted_address;
-var t3= place.address_components;
-var t5=t3[1].short_name;
-  var latlngStr = input1.split(',', 4);
-  var t1 =latlngStr[0];
-  /*  infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
-        'Place ID: ' + place.place_id + '<br>' +
-        place.formatted_address);*/
-		infowindow.setContent('<div><strong> Area: ' + t1 + '<br> City: '+t5+'</strong><br>' +'Place ID: ' +place.place_id + '<br>' +place.formatted_address+'');
-       
-		 window.localStorage['place.area.local'] = ''+t1;
-		  window.localStorage['place.city.local'] = ''+t5;
-    infowindow.open(map, marker);
-  });
- 
-	
-  google.maps.event.addDomListener(window, 'load', initialize);
-	
-	
-	
 	
 	
   };
@@ -710,62 +696,6 @@ var t5=t3[1].short_name;
   
   
 })
-
-.controller('DashCtrl', function($scope, $rootScope, $ionicUser, $ionicPush) {
-  // Identifies a user with the Ionic User service
-  $scope.identifyUser = function() {
-    console.log('Ionic User: Identifying with Ionic User service');
-
-    var user = $ionicUser.get();
-    if(!user.user_id) {
-      // Set your user_id here, or generate a random one.
-      user.user_id = $ionicUser.generateGUID();
-    };
-
-    // Add some metadata to your user object.
-    angular.extend(user, {
-      name: 'Ionitron',
-      bio: 'I come from planet Ion'
-    });
-
-    // Identify your user with the Ionic User Service
-    $ionicUser.identify(user).then(function(){
-      $scope.identified = true;
-      alert('Identified user ' + user.name + '\n ID ' + user.user_id);
-    });
-  };
-})  
-
-
-.controller('DashCtrl', function($scope, $rootScope, $ionicUser, $ionicPush) {
-  
-  // Identifies a user with the Ionic User service
-  $scope.identifyUser = function() {
-    // Your identify code from before
-  };
-  
-  // Registers a device for push notifications and stores its token
-  $scope.pushRegister = function() {
-    console.log('Ionic Push: Registering user');
-
-    // Register with the Ionic Push service.  All parameters are optional.
-    $ionicPush.register({
-      canShowAlert: true, //Can pushes show an alert on your screen?
-      canSetBadge: true, //Can pushes update app icon badges?
-      canPlaySound: true, //Can notifications play a sound?
-      canRunActionsOnWake: true, //Can run actions outside the app,
-      onNotification: function(notification) {
-        // Handle new push notifications here
-        // console.log(notification);
-        return true;
-      }
-    });
-  };
-})
-
-
-
-
 
 .controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [

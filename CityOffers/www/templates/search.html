@@ -26,6 +26,7 @@
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&signed_in=true"></script>
 	 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqGXcExPSUxrVMpnfBciUejJRU06ZYelE&sensor=true"></script>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_cy8C8pj5urqUSWERE-qU8NmkoNg6jpk&sensor=true"></script>
 
   </head>
  
@@ -35,7 +36,7 @@
   <form ng-submit="registermerchant($event)">
 			 <label class="item item-input">
           <span class="input-label">UserId</span>
-          <input type="text" id="loginData.userid" value="{{loginData.username}}" ng-model="loginData.userid"">
+          <input type="text" id="loginData.userid" value="{{loginData.username}}" ng-value="{{loginData.username}}" ng-model="loginData.userid"">
         </label>
 		
 			 <label class="item item-input">
@@ -52,11 +53,11 @@
         </label>
 		 <label class="item item-input">
           <span class="input-label">Area</span>
-          <input type="text" id="loginData.area" value="{{arearegister}}"  ng-model="loginData.area">
+          <input type="text" id="loginData.area" value="pendurthy" ng-model="loginData.area">
         </label>
 		 <label class="item item-input">
           <span class="input-label">City</span>
-          <input type="text" id="loginData.city"  value="{{cityregister}}" ng-model="loginData.city">
+          <input type="text" id="loginData.city"  value="{{cityregister}}" ng-value="{{cityregister}}" ng-model="loginData.city">
         </label>
 		 <label class="item item-input">
           <span class="input-label">E-mail</span>
@@ -64,7 +65,7 @@
         </label>
 		 <label class="item item-input">
           <span class="input-label">Contact No.</span>
-          <input type="text" id="loginData.contact1" ng-model="loginData.contact1" >
+          <input type="text" id="loginData.contact1" ng-model="loginData.contact1"  >
         </label>
 		<label class="item item-input">
           <span class="input-label">Alternate No.</span>
