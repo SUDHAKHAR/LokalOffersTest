@@ -179,7 +179,7 @@ var t5=t3[1].short_name;
 var directionsService = new google.maps.DirectionsService();
 
 function initialise() {   
-    var myLatlng = new google.maps.LatLng(17.8333,83.2000);
+  //  var myLatlng = new google.maps.LatLng(17.8333,83.2000);
 	 var latlng = new google.maps.LatLng(17.8333,83.2000);
 
 	geocoder = new google.maps.Geocoder();
@@ -233,7 +233,7 @@ var marker;
   geocoder.geocode({'latLng': latlng}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       if (results[1]) {
-        $scope.map.setZoom(12);
+        $scope.map.setZoom(18);
         marker = new google.maps.Marker({
             position: latlng,
             map: $scope.map
